@@ -1,0 +1,68 @@
+name: MLOps CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  ci:
+    name: CI - Test, Train, Evaluate, Register
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Step 3: Install uv (your project manager)
+      - name: Install uv
+        run: |
+          pip install --no-cache-dir uv
+
+      # Step 4: Install dependencies exactly from lockfile
+      - name: Install dependencies
+        run: |
+          uv sync --frozen
+
+      # Step 5: Test, Train, Evaluate, Register
+      - name: Pipeline
+        run: |
+          uv run pipeline.py
+
+  cd:
+    name: CD - Deploy Model
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repo again (fresh VM)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Step 3: Install uv
+      - name: Install uv
+        run: |
+          pip install --no-cache-dir uv
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          uv sync --frozen --no-dev
+
+      # Step 5: Deploy model (simulated)
+      - name: Deploy model
+        run: |
+          uv run python deploy.py
