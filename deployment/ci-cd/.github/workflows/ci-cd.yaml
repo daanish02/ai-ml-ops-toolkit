@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Step 3: Install uv (your project manager)
+      # Step 3: Install uv
       - name: Install uv
         run: |
           pip install --no-cache-dir uv
