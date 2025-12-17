@@ -1,0 +1,8 @@
+services:
+  fastapi-app:
+    image: test-operations-app
+    build: .
+    ports:
+      - "8000-8010:8000"
+    environment:
+      SERVICE_PORT: 8000
